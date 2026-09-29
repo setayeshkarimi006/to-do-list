@@ -25,6 +25,9 @@ const folderForm = document.getElementById("folder-form");
 const folderInput = document.getElementById("folder-input");
 const cancelFolderBtn = document.getElementById("cancel-folder");
 
+const timerDisplay = document.getElementById("timer-display");
+const timerStartBtn = document.getElementById("timer-start");
+const timerResetBtn = document.getElementById("timer-reset")
 // ===================================
 // 2. ساخت داده‌های اولیه
 // ===================================
@@ -43,8 +46,9 @@ let nextFolderId = folders.length
   ? Math.max(...folders.map((folder) => folder.id)) + 1
   : 1;
 
-//let nextTaskId = 1;
-//let nextFolderId = 1;
+let timerSeconds = 0
+let timerInterval = null ;
+let timerRunning = false ;
 
 // ===================================
 // 2/5. ساخت تابع ذخیره سازی
@@ -289,7 +293,36 @@ function renderFolders() {
 // ===================================
 // 11. اجرای اولیه برنامه
 // ===================================
-
+timerStartBtn.addEventListener("click",function()
+{
+if(timerRunning){
+  return;
+}
+timerRunning = true;
+timerInterval = setInterval(function()
+{
+  timerSeconds++;
+  updateTimerDisplay();
+},1000
+);
+});
 renderTasks();
-
 renderFolders();
+
+// ===================================
+// 12.تابع نمایش تایمر 
+// ===================================
+function updateTimerDisplay(){
+  const hours = Math.floor(timerSeconds / 3600);
+  const minutes = Math.floor((timerSeconds % 3600) / 60);
+  const seconds = timerSeconds % 60 ; 
+  timerDisplay.textContent =
+  `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+timerResetBtn.addEventListener("click",function(){
+  clearInterval(timerInterval);
+  timerInteval = null ;
+  timerSeconds = 0 ;
+  timerRunning = false ; 
+  updateTimerDisplay();
+});
